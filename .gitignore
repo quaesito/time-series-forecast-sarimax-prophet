@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.csv
+*.pdf
+*.png
+*.jpg
+*.JPG
+*.xlsx
+.ipynb_checkpoints/
+archive/
+videos/
+data/*/*.npz
+*.npz
+*.pk
+*best.json
+*current.json
+*.rar
+*.pkl
+*.docx
+*.npz
+*.xml
+*.stl
+*.mp4
+*.h5
