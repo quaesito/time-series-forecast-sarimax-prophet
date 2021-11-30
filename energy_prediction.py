@@ -78,8 +78,7 @@ y = data['energy']
 y = y.resample('MS').mean()
 
 
-#%% Data Visualization
-
+#%% Data Decomposition
 from pylab import rcParams
 rcParams['figure.figsize'] = 18, 8
 decomposition = sm.tsa.seasonal_decompose(y, model='additive', period = 30)
@@ -89,24 +88,16 @@ plt.savefig(current_dir + os.sep + 'DATA_DECOMPOSITION.png')
 plt.close()
 
 #%% Fit an ARIMA
-
-# Define the p, d and q parameters to take any value between 0 and 2
 p = d = q = range(0, 2)
-
-# Generate all different combinations of p, q and q triplets
 pdq = list(itertools.product(p, d, q))
-
-# Generate all different combinations of seasonal p, q and q triplets
 seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product(p, d, q))]
-
 print('Examples of parameter combinations for Seasonal ARIMA...')
 print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
 print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
 print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
 print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
 
-warnings.filterwarnings("ignore") # specify to ignore warning messages
-
+warnings.filterwarnings("ignore")
 for param in pdq:
     for param_seasonal in seasonal_pdq:
         try:
@@ -121,9 +112,6 @@ for param in pdq:
         except:
             continue
 
-#%% Check for optimal combo and adjust
-
-# adjust model according to last ouptut of arima fitting
 mod = sm.tsa.statespace.SARIMAX(y,
                                 order=(1, 0, 1),
                                 seasonal_order=(1, 0, 1, 12),
@@ -136,7 +124,7 @@ print(results.summary().tables[1])
 
 results.plot_diagnostics(figsize=(16, 8))
 plt.show()
-plt.savefig(current_dir + os.sep + 'ARIMA_DIAGNOSTICS.png')
+plt.savefig(current_dir + os.sep + 'SARIMAX_DIAGNOSTICS.png')
 plt.close()
 
 #%% Validating Forecast
@@ -156,7 +144,7 @@ ax.set_ylabel('Energy')
 plt.legend()
 
 plt.show()
-plt.savefig(current_dir + os.sep + 'ARIMA_DIAGNOSTICS.png')
+plt.savefig(current_dir + os.sep + 'SARIMAX_VALIDATION.png')
 plt.close()
 
 y_forecasted = pred.predicted_mean
@@ -177,7 +165,7 @@ mape, rmse, mse, r2 = forecast_accuracy(y_forecasted, y_truth)
 
 metrics = pd.DataFrame(data = (mape, rmse, mse, r2),\
                         index = ('mape', 'rmse', 'mse', 'r2'))
-metrics.to_csv(current_dir + os.sep + 'ARIMA_METRICS.csv')
+metrics.to_csv(current_dir + os.sep + 'SARIMAX_METRICS.csv')
 
 #%% Forecast 1y
 years = 1
@@ -192,7 +180,7 @@ ax.set_xlabel('Date')
 ax.set_ylabel('Energy')
 plt.legend()
 plt.show()
-plt.savefig(current_dir + os.sep + 'ARIMA_FORECAST_1y.png')
+plt.savefig(current_dir + os.sep + 'SARIMAX_FORECAST_1y.png')
 plt.close()
 
 #%% Forecast 5y
@@ -208,7 +196,7 @@ ax.set_xlabel('Date')
 ax.set_ylabel('Energy')
 plt.legend()
 plt.show()
-plt.savefig(current_dir + os.sep + 'ARIMA_FORECAST_5y.png')
+plt.savefig(current_dir + os.sep + 'SARIMAX_FORECAST_5y.png')
 plt.close()
 
 #%% Data Pre-processing
@@ -269,4 +257,3 @@ mape, rmse, mse, r2 = forecast_accuracy(metric_df.yhat,  metric_df.y)
 metrics = pd.DataFrame(data = (mape, rmse, mse, r2),\
                         index = ('mape', 'rmse', 'mse', 'r2'))
 metrics.to_csv(current_dir + os.sep + 'PROPHET_METRICS.csv')
-
